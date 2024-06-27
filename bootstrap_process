@@ -1,0 +1,50 @@
+1. Initial Page Load (Server-Side Rendering or Static Generation):
+
+	•	_app.tsx:
+	•	This is the custom App component which wraps all page components. It runs first for every request and can be used to initialize pages, maintain global layout, and manage global state or side effects.
+	•	_document.tsx (only for SSR):
+	•	This custom Document component is used to augment the HTML and body tags returned by Next.js. It’s only used on the server side and does not affect client-side navigation. It’s mainly for setting up global HTML structure or integrating with libraries that need direct access to the document (like server-side rendering of styled-components).
+	•	Page Component (e.g., index.tsx, about.tsx):
+	•	The actual page component corresponding to the route. For example, if the user navigates to /about, about.tsx will be rendered.
+	•	If getStaticProps, getServerSideProps, or getInitialProps is defined, these functions are called before rendering the page component to fetch data.
+
+2. Client-Side Navigation:
+
+	•	_app.tsx:
+	•	This is invoked first during client-side navigation to maintain the layout and handle any global logic.
+	•	Page Component (e.g., index.tsx, about.tsx):
+	•	The new page component for the target route is then rendered.
+	•	For client-side navigation, getStaticProps or getServerSideProps does not run again; the static data generated during the build or fetched during the initial request is used. However, getInitialProps will run on the client side if defined in the page component.
+
+File Execution Order:
+
+	1.	Initial Load:
+	•	pages/_app.tsx
+	•	pages/_document.tsx (server-side only)
+	•	Page component (e.g., pages/index.tsx)
+	•	getStaticProps or getServerSideProps (if defined)
+	2.	Client-Side Navigation:
+	•	pages/_app.tsx
+	•	Page component (e.g., pages/about.tsx)
+	•	getInitialProps (if defined in the page component)
+
+Example Initial Page Load:
+
+For an initial request to /about:
+
+	1.	Next.js starts the server-side rendering process.
+	2.	It first runs pages/_app.tsx.
+	3.	Then it runs pages/_document.tsx (only on the server).
+	4.	It processes getServerSideProps or getStaticProps in pages/about.tsx.
+	5.	Finally, it renders pages/about.tsx inside the custom App component.
+
+Example Client-Side Navigation:
+
+For client-side navigation from / to /about:
+
+	1.	The user clicks a link to /about.
+	2.	next/link or next/router intercepts and handles the navigation.
+	3.	pages/_app.tsx runs to apply the global layout or state changes.
+	4.	pages/about.tsx is rendered, potentially running getInitialProps if defined.
+
+By understanding this flow, you can effectively manage the rendering process and data fetching strategies in your TypeScript Next.js application.
